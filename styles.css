@@ -645,8 +645,9 @@ select, input, textarea { font-family: inherit; }
 }
 .values-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    grid-template-columns: repeat(3, minmax(200px, 320px));
     gap: 20px;
+    justify-content: center;
 }
 .value-card {
     background: var(--white);
