@@ -1,4 +1,119 @@
 // ===========================
+// Snacks Carousel
+// ===========================
+
+let currentSlide = 0;
+const carousel = document.querySelector('.snacks-carousel');
+const carouselWrapper = document.querySelector('.snacks-carousel-wrapper');
+const prevBtn = document.querySelector('.carousel-btn-prev');
+const nextBtn = document.querySelector('.carousel-btn-next');
+const dotsContainer = document.querySelector('.carousel-dots');
+
+function initCarousel() {
+    if (!carousel || !carouselWrapper) return;
+
+    const cards = carousel.querySelectorAll('.snack-card');
+    const totalSlides = cards.length;
+
+    // Create dots
+    if (dotsContainer) {
+        dotsContainer.innerHTML = '';
+        for (let i = 0; i < totalSlides; i++) {
+            const dot = document.createElement('button');
+            dot.classList.add('carousel-dot');
+            if (i === 0) dot.classList.add('active');
+            dot.addEventListener('click', () => goToSlide(i));
+            dotsContainer.appendChild(dot);
+        }
+    }
+
+    // Update carousel position
+    function updateCarousel() {
+        const cardWidth = cards[0].offsetWidth + 24; // card width + gap
+        carousel.style.transform = `translateX(-${currentSlide * cardWidth}px)`;
+
+        // Update dots
+        if (dotsContainer) {
+            const dots = dotsContainer.querySelectorAll('.carousel-dot');
+            dots.forEach((dot, index) => {
+                dot.classList.toggle('active', index === currentSlide);
+            });
+        }
+
+        // Update button states
+        if (prevBtn) prevBtn.disabled = currentSlide === 0;
+        if (nextBtn) nextBtn.disabled = currentSlide === totalSlides - 1;
+    }
+
+    function goToSlide(index) {
+        currentSlide = Math.max(0, Math.min(index, totalSlides - 1));
+        updateCarousel();
+    }
+
+    function nextSlide() {
+        if (currentSlide < totalSlides - 1) {
+            currentSlide++;
+            updateCarousel();
+        }
+    }
+
+    function prevSlide() {
+        if (currentSlide > 0) {
+            currentSlide--;
+            updateCarousel();
+        }
+    }
+
+    // Event listeners
+    if (prevBtn) prevBtn.addEventListener('click', prevSlide);
+    if (nextBtn) nextBtn.addEventListener('click', nextSlide);
+
+    // Auto-play carousel
+    let autoplayInterval = setInterval(nextSlide, 4000);
+
+    // Pause autoplay on hover
+    if (carouselWrapper) {
+        carouselWrapper.addEventListener('mouseenter', () => {
+            clearInterval(autoplayInterval);
+        });
+
+        carouselWrapper.addEventListener('mouseleave', () => {
+            autoplayInterval = setInterval(nextSlide, 4000);
+        });
+    }
+
+    // Loop carousel
+    function loopCarousel() {
+        if (currentSlide === totalSlides - 1) {
+            currentSlide = 0;
+        } else {
+            currentSlide++;
+        }
+        updateCarousel();
+    }
+
+    // Replace simple nextSlide with looping version for autoplay
+    clearInterval(autoplayInterval);
+    autoplayInterval = setInterval(loopCarousel, 4000);
+
+    if (carouselWrapper) {
+        carouselWrapper.addEventListener('mouseenter', () => {
+            clearInterval(autoplayInterval);
+        });
+
+        carouselWrapper.addEventListener('mouseleave', () => {
+            autoplayInterval = setInterval(loopCarousel, 4000);
+        });
+    }
+
+    // Handle window resize
+    window.addEventListener('resize', updateCarousel);
+
+    // Initial update
+    updateCarousel();
+}
+
+// ===========================
 // Navigation
 // ===========================
 
@@ -149,6 +264,9 @@ function setFormStatus(msg, type) {
 // ===========================
 
 document.addEventListener('DOMContentLoaded', () => {
+    // Initialize carousel
+    initCarousel();
+
     // Add reveal class to cards and sections
     const targets = document.querySelectorAll(
         '.snack-card, .value-card, .program-card, .plan-card, ' +

@@ -582,6 +582,97 @@ select, input, textarea { font-family: inherit; }
     padding: 96px 0;
     background: var(--white);
 }
+
+/* Carousel Wrapper */
+.snacks-carousel-wrapper {
+    position: relative;
+    padding: 0 50px;
+}
+
+/* Carousel Container */
+.snacks-carousel {
+    display: flex;
+    gap: 24px;
+    overflow: hidden;
+    scroll-behavior: smooth;
+    position: relative;
+}
+
+/* Carousel Buttons */
+.carousel-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 44px;
+    height: 44px;
+    background: var(--white);
+    border: 2px solid var(--border);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--dark);
+    cursor: pointer;
+    transition: all var(--transition);
+    z-index: 10;
+    box-shadow: var(--shadow-sm);
+}
+
+.carousel-btn:hover {
+    background: var(--red);
+    border-color: var(--red);
+    color: var(--white);
+    box-shadow: var(--shadow-md);
+}
+
+.carousel-btn-prev {
+    left: 0;
+}
+
+.carousel-btn-next {
+    right: 0;
+}
+
+.carousel-btn:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+}
+
+.carousel-btn:disabled:hover {
+    background: var(--white);
+    border-color: var(--border);
+    color: var(--dark);
+}
+
+/* Carousel Dots */
+.carousel-dots {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 32px;
+}
+
+.carousel-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--border);
+    cursor: pointer;
+    transition: all var(--transition);
+    border: none;
+    padding: 0;
+}
+
+.carousel-dot:hover {
+    background: var(--red-light);
+}
+
+.carousel-dot.active {
+    background: var(--red);
+    width: 28px;
+    border-radius: 5px;
+}
+
 .snacks-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
@@ -596,6 +687,8 @@ select, input, textarea { font-family: inherit; }
     flex-direction: column;
     gap: 14px;
     transition: box-shadow var(--transition), transform var(--transition);
+    flex-shrink: 0;
+    width: calc((100% - 48px) / 3);
 }
 .snack-card:hover {
     box-shadow: var(--shadow-md);
@@ -1404,4 +1497,16 @@ select, input, textarea { font-family: inherit; }
     .programs-grid { grid-template-columns: 1fr; }
     .values-grid { grid-template-columns: 1fr 1fr; }
     .loyalty-card { width: 100%; }
+
+    /* Carousel mobile adjustments */
+    .snacks-carousel-wrapper {
+        padding: 0 40px;
+    }
+    .snack-card {
+        width: 100%;
+    }
+    .carousel-btn {
+        width: 36px;
+        height: 36px;
+    }
 }
