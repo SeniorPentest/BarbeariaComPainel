@@ -20,7 +20,63 @@
 =========================== */
 .plans-grid, .values-grid {
     display: grid;
+ codex/upgrade-icons-in-sections
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    align-items: stretch;
+}
+.value-card {
+    background: var(--white);
+    border-radius: var(--radius-lg);
+    padding: 32px 24px;
+    text-align: center;
+    border: 1px solid var(--border);
+    transition: box-shadow var(--transition), transform var(--transition);
+}
+.value-card:hover {
+    box-shadow: var(--shadow-md);
+    transform: translateY(-4px);
+}
+.value-icon {
+    margin-bottom: 14px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+.value-icon svg {
+    width: 56px;
+    height: 56px;
+    stroke: var(--red);
+    stroke-width: 2.25;
+    fill: none;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+.value-card h3 {
+    font-size: .98rem;
+    font-weight: 700;
+    margin-bottom: 8px;
+    color: var(--dark);
+}
+.value-card p {
+    font-size: .85rem;
+    color: var(--muted);
+    line-height: 1.6;
+}
+
+/* ===========================
+   PROGRAMS
+=========================== */
+.programs {
+    padding: 96px 0;
+    background: var(--white);
+}
+.programs-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+=======
     grid-template-columns: repeat(3, 1fr); /* Matriz 1x3 perfeita */
+ main
     gap: 24px;
     align-items: stretch; /* Garante altura uniforme */
 }
