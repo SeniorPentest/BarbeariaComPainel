@@ -1,3 +1,4 @@
+ codex/refactor-init-carousel-function
 // Função principal do Carrossel
 function initCarousel(containerSelector) {
     const carouselWrapper = document.querySelector(containerSelector);
@@ -40,35 +41,38 @@ function initCarousel(containerSelector) {
     const getCarouselMetrics = () => {
         const cardWidth = cards[0].offsetWidth + getGap(); // Largura + Gap
         const visibleCards = Math.max(1, Math.round(carouselWrapper.offsetWidth / cardWidth));
+
+function initCarousel(wrapperSelector, trackSelector, cardSelector) {
+    const wrapper = document.querySelector(wrapperSelector);
+    const track = document.querySelector(trackSelector);
+    if (!wrapper || !track) return;
+
+    const cards = track.querySelectorAll(cardSelector);
+    const totalSlides = cards.length;
+    let currentSlide = 0;
+    let autoplayId = null;
+
+    const getMetrics = () => {
+        const cardWidth = cards[0].offsetWidth + 24; 
+        const visibleCards = Math.round(wrapper.offsetWidth / cardWidth);
+ main
         const maxIndex = Math.max(0, totalSlides - visibleCards);
         return { cardWidth, maxIndex };
     };
 
-    // 2. Lógica de Movimentação e Limite (Fix do Espaço Branco)
     function updateCarousel() {
-        const { cardWidth, maxIndex } = getCarouselMetrics();
-
-        // Ajuste de segurança: se o slide ultrapassar o limite visual, trava no máximo
+        const { cardWidth, maxIndex } = getMetrics();
         if (currentSlide > maxIndex) currentSlide = maxIndex;
-
-        carousel.style.transform = `translateX(-${currentSlide * cardWidth}px)`;
-
-        // Atualizar Dots
-        if (dotsContainer) {
-            const dots = dotsContainer.querySelectorAll('.carousel-dot');
-            dots.forEach((dot, index) => dot.classList.toggle('active', index === currentSlide));
-        }
+        track.style.transform = `translateX(-${currentSlide * cardWidth}px)`;
     }
 
-    // 3. Funções de Avanço e Recuo (Loop Infinito)
     function nextSlide() {
-        const { maxIndex } = getCarouselMetrics();
-
-        // Se chegar no limite de exibição, volta ao início (0)
+        const { maxIndex } = getMetrics();
         currentSlide = (currentSlide >= maxIndex) ? 0 : currentSlide + 1;
         updateCarousel();
     }
 
+ codex/refactor-init-carousel-function
     function prevSlide() {
         const { maxIndex } = getCarouselMetrics();
         currentSlide = (currentSlide > 0) ? currentSlide - 1 : maxIndex;
@@ -87,19 +91,20 @@ function initCarousel(containerSelector) {
 
     const resetAutoplay = () => { stopAutoplay(); startAutoplay(); };
 
-    // Listeners
-    if (prevBtn) prevBtn.addEventListener('click', () => { prevSlide(); resetAutoplay(); });
-    if (nextBtn) nextBtn.addEventListener('click', () => { nextSlide(); resetAutoplay(); });
+    const startAutoplay = () => { autoplayId = setInterval(nextSlide, 3500); };
+    const stopAutoplay = () => { if (autoplayId) clearInterval(autoplayId); };
+ main
+
+    wrapper.addEventListener('mouseenter', stopAutoplay);
+    wrapper.addEventListener('mouseleave', startAutoplay);
     window.addEventListener('resize', updateCarousel);
-    carouselWrapper.addEventListener('mouseenter', stopAutoplay);
-    carouselWrapper.addEventListener('mouseleave', startAutoplay);
 
     updateCarousel();
     startAutoplay();
 }
 
-// Inicialização Global
 document.addEventListener('DOMContentLoaded', () => {
+ codex/refactor-init-carousel-function
     initCarousel('.snacks-carousel-wrapper');
     initCarousel('.plans-wrapper');
     initCarousel('.values-wrapper');
@@ -109,4 +114,9 @@ document.addEventListener('DOMContentLoaded', () => {
             if (img.dataset.fallback) { img.src = img.dataset.fallback; img.removeAttribute('data-fallback'); }
         }, { once: true });
     });
+
+    initCarousel('.snacks-carousel-wrapper', '.snacks-carousel', '.snack-card');
+    initCarousel('.plans-carousel-wrapper', '.plans-grid', '.plan-card');
+    initCarousel('.values-wrapper', '.values-grid', '.value-card');
+ main
 });
