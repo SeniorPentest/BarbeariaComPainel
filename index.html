@@ -40,9 +40,16 @@
     <main>
         <section class="hero-section">
             <div class="container hero-content">
-                <h1>O Teu Estilo, <br>A Nossa Maestria.</h1>
-                <p>Reserva o teu horário com exclusividade. Pagamento direto, sem intermediários no Pix ou segurança total no Cartão.</p>
-                <a href="#agendar" class="btn btn-primary btn-hero">Escolher Horário</a>
+                <div id="status-painel" class="status-panel">
+                    <span class="status-kicker">Painel ao vivo</span>
+                    <div class="status-main">
+                        <span id="status-indicator" class="status-indicator status-closed" aria-hidden="true"></span>
+                        <div class="status-texts">
+                            <div id="status-principal" class="status-primary">Verificando disponibilidade...</div>
+                            <div id="status-secundario" class="status-secondary">Atualizando horários em tempo real.</div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </section>
 

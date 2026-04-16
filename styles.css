@@ -130,6 +130,38 @@ body::before {
 .hero-content h1 { font-size: 3.3rem; color: var(--accent-color); line-height: 1.05; margin-bottom: 16px; }
 .hero-content p { font-size: 1.1rem; color: var(--text-secondary); max-width: 520px; }
 
+.status-panel {
+    display: grid;
+    gap: 12px;
+    padding: 26px 24px;
+    border-radius: 18px;
+    border: 1px solid var(--border-color);
+    background: linear-gradient(140deg, rgba(24, 24, 24, 0.9), rgba(14, 14, 14, 0.92));
+    box-shadow: 0 22px 70px rgba(0, 0, 0, 0.45);
+}
+.status-kicker {
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-weight: 700;
+    font-size: 0.85rem;
+    color: var(--accent-color);
+}
+.status-main { display: flex; align-items: center; gap: 16px; }
+.status-texts { display: flex; flex-direction: column; gap: 6px; }
+.status-primary { font-family: var(--font-serif); font-size: 2.4rem; line-height: 1.05; color: var(--text-primary); }
+.status-secondary { color: var(--text-secondary); font-size: 1.02rem; }
+.status-indicator {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    display: inline-block;
+    box-shadow: 0 0 14px rgba(212, 175, 55, 0.45);
+    border: 1px solid rgba(0, 0, 0, 0.65);
+}
+.status-indicator.status-open { background: #26c46c; box-shadow: 0 0 12px rgba(38, 196, 108, 0.85); }
+.status-indicator.status-lunch { background: #f2c94c; box-shadow: 0 0 12px rgba(242, 201, 76, 0.8); }
+.status-indicator.status-closed { background: #d35447; box-shadow: 0 0 12px rgba(211, 84, 71, 0.8); }
+
 /* RESOLUÇÃO DO ESPAÇO: margem superior no botão hero */
 .btn-hero { 
     margin-top: 40px !important; 
@@ -329,6 +361,8 @@ body::before {
     .hero-section { padding: 90px 0; min-height: auto; }
     .hero-content { padding: 24px; }
     .hero-content h1 { font-size: 2.2rem; }
+    .status-primary { font-size: 1.8rem; }
+    .status-secondary { font-size: 0.98rem; }
     .booking-grid { grid-template-columns: 1fr; }
     .hero-content .btn { width: 100%; text-align: center; }
 }
