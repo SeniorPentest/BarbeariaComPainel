@@ -1,13 +1,10 @@
-/* ===========================
-   VARIÁVEIS E TEMA ESCURO
-=========================== */
 :root {
     --bg-color: #0a0a0a;
-    --surface-color: #141414;
+    --surface-color: rgba(20, 20, 20, 0.85);
     --border-color: #2a2a2a;
     --text-primary: #ffffff;
     --text-secondary: #a0a0a0;
-    --accent-color: #d4af37; /* Dourado */
+    --accent-color: #d4af37;
     --accent-hover: #b5952f;
     --danger: #ff4444;
     --success: #00C851;
@@ -19,150 +16,96 @@
 html { scroll-behavior: smooth; }
 
 body {
-    background-color: var(--bg-color); /* Fallback */
+    background-color: var(--bg-color);
     color: var(--text-primary);
     font-family: var(--font-sans);
     line-height: 1.6;
-    
-    /* NOVO: Imagem do homem no site TODO */
-    background-image: url('Caminho/Para/Sua/Foto_Hero_image_10.png'); /* Coloque o link real */
+    background-image: url('fundo-rosto.jpg'); 
     background-size: cover;
-    background-position: top center; /* Centraliza o rosto no topo */
+    background-position: center;
     background-repeat: no-repeat;
-    background-attachment: fixed; /* Efeito parallax ( premium) */
+    background-attachment: fixed;
     position: relative;
+    min-height: 100vh;
 }
 
-/* Camada escura geral sobre a imagem para garantir a legibilidade do texto em todo o site */
+/* Overlay Escuro para Legibilidade */
 body::before {
     content: '';
     position: absolute;
     top: 0; left: 0; width: 100%; height: 100%;
-    background-color: rgba(0, 0, 0, 0.75); /* Camada escura suave */
-    z-index: -1; /* Fica atrás de todo o conteúdo */
+    background-color: rgba(0, 0, 0, 0.75);
+    z-index: -1;
 }
 
-.container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 24px;
-}
+.container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
 
-h1, h2, h3 { font-family: var(--font-serif); font-weight: 700; margin-bottom: 16px; }
-
-/* ===========================
-   CABEÇALHO (Logo Maquininha)
-=========================== */
+/* Cabeçalho e Logo */
 .site-header {
-    background-color: rgba(10, 10, 10, 0.95);
+    background-color: rgba(10, 10, 10, 0.9);
     backdrop-filter: blur(10px);
     border-bottom: 1px solid var(--border-color);
-    position: sticky;
-    top: 0;
-    z-index: 100;
-    padding: 16px 0;
+    position: sticky; top: 0; z-index: 100;
+    padding: 12px 0;
 }
 
 .header-inner { display: flex; justify-content: space-between; align-items: center; }
 .brand { display: flex; align-items: center; gap: 12px; }
+.brand-logo-img { height: 55px; width: auto; object-fit: contain; }
+.brand-name { font-family: var(--font-serif); font-size: 1.4rem; font-weight: 800; }
 
-/* Styling o novo logo em imagem */
-.brand-logo-img {
-    height: 50px; /* Ajuste a altura conforme necessário */
-    width: auto;
-    object-fit: contain;
-}
-
-.brand-text { display: flex; flex-direction: column; }
-.brand-name { font-family: var(--font-serif); font-size: 1.5rem; font-weight: 800; }
-.nav-links { display: flex; gap: 16px; }
-.nav-links a { color: var(--text-primary); text-decoration: none; font-weight: 500; }
+.nav-links a { color: var(--text-primary); text-decoration: none; margin: 0 10px; font-weight: 500; }
 .nav-links a:hover { color: var(--accent-color); }
-.header-actions { display: flex; align-items: center; }
 
-/* ===========================
-   BOTÕES E COMPONENTES
-=========================== */
-.btn { display: inline-block; padding: 12px 24px; border-radius: 8px; font-weight: 600; text-decoration: none; cursor: pointer; border: none; text-align: center; }
-.btn-primary { background-color: var(--accent-color); color: #000; }
-.section { padding: 80px 0; }
-.section-head { margin-bottom: 48px; text-align: center; }
+/* Hero */
+.hero-section { height: 70vh; display: flex; align-items: center; }
+.hero-content { max-width: 650px; }
+.hero-content h1 { font-size: 3.5rem; color: var(--accent-color); margin-bottom: 20px; }
 
-/* ===========================
-   CONTEÚDO HERO (Fica sobre o fundo do body)
-=========================== */
-.hero-section {
-    height: calc(100vh - 81px); /* Preenche a tela tirando o header */
-    display: flex;
-    align-items: center;
-    position: relative;
-    z-index: 1; /* Garante que fica acima da camada escura do body */
-}
-
-.hero-content { max-width: 600px; }
-.hero-content h1 { font-size: 3.5rem; line-height: 1.1; color: var(--accent-color); }
-.hero-content p { font-size: 1.2rem; color: var(--text-secondary); margin-bottom: 24px; }
-
-/* ===========================
-   SERVIÇOS (Carrossel)
-=========================== */
-.service-grid {
-    display: flex;
-    overflow-x: auto;
-    scroll-snap-type: x mandatory;
-    gap: 16px;
-    padding-bottom: 20px;
-}
-
+/* Cards e Seções */
+.section { padding: 60px 0; }
+.service-grid { display: flex; overflow-x: auto; gap: 20px; padding-bottom: 15px; }
 .service-card {
-    min-width: 260px; flex-shrink: 0; scroll-snap-align: start;
-    background-color: var(--surface-color); border: 1px solid var(--border-color);
-    border-radius: 12px; padding: 24px; display: flex; flex-direction: column; justify-content: space-between; gap: 16px;
+    min-width: 280px; background: var(--surface-color); border: 1px solid var(--border-color);
+    border-radius: 12px; padding: 25px; transition: 0.3s;
+}
+.service-card.selected { border-color: var(--accent-color); background: rgba(212, 175, 55, 0.1); }
+.price-tag { color: var(--accent-color); font-weight: 800; font-size: 1.3rem; }
+
+/* Botões */
+.btn, .service-select, .confirm-btn {
+    cursor: pointer; border-radius: 6px; border: none; font-weight: 700; transition: 0.2s;
+}
+.btn-primary, .confirm-btn { background: var(--accent-color); color: #000; padding: 12px 25px; }
+.service-select { width: 100%; padding: 10px; background: transparent; color: #fff; border: 1px solid var(--border-color); margin-top: 15px; }
+.service-card.selected .service-select { background: var(--accent-color); color: #000; }
+
+/* Agendamento */
+.booking-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 25px; }
+.panel { background: var(--surface-color); padding: 30px; border-radius: 15px; border: 1px solid var(--border-color); }
+.field input, .field select {
+    width: 100%; padding: 12px; background: #000; border: 1px solid var(--border-color);
+    color: #fff; border-radius: 5px; margin-top: 8px; margin-bottom: 15px;
 }
 
-.service-card.selected { border-color: var(--accent-color); box-shadow: 0 0 0 1px var(--accent-color); }
-.price-tag { color: var(--accent-color); font-weight: 700; font-size: 1.2rem; }
-.service-select { width: 100%; padding: 12px; background-color: transparent; border: 1px solid var(--border-color); color: var(--text-primary); border-radius: 6px; cursor: pointer; }
-.service-card.selected .service-select { background-color: var(--accent-color); color: #000; border-color: var(--accent-color); }
-.test-card { border-color: var(--danger) !important; }
+.payment-methods { display: flex; gap: 10px; margin-bottom: 20px; }
+.payment-button { flex: 1; padding: 10px; background: none; border: 1px solid var(--border-color); color: #fff; border-radius: 5px; cursor: pointer; }
+.payment-button.active { border-color: var(--accent-color); color: var(--accent-color); }
 
-/* ===========================
-   AGENDAMENTO
-=========================== */
-.booking-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; }
-.panel { background-color: var(--surface-color); border: 1px solid var(--border-color); border-radius: 16px; padding: 32px; }
-.field { margin-bottom: 24px; }
-.field label { display: block; font-size: 0.9rem; margin-bottom: 8px; color: var(--text-secondary); }
-.field input, .field select { width: 100%; padding: 14px; background-color: var(--bg-color); border: 1px solid var(--border-color); color: var(--text-primary); border-radius: 8px; }
-.payment-methods { display: flex; gap: 12px; margin-bottom: 24px; }
-.payment-button { flex: 1; padding: 12px; background: transparent; border: 1px solid var(--border-color); color: var(--text-primary); border-radius: 8px; cursor: pointer; }
-.payment-button.active { border-color: var(--accent-color); color: var(--accent-color); background-color: rgba(212, 175, 55, 0.05); }
-.total-line { display: flex; justify-content: space-between; align-items: center; padding-top: 24px; border-top: 1px solid var(--border-color); margin-bottom: 24px; font-size: 1.2rem; }
-#total-value { font-size: 1.5rem; color: var(--accent-color); }
-.confirm-btn { width: 100%; padding: 16px; background-color: var(--accent-color); color: #000; border: none; border-radius: 8px; font-size: 1.1rem; font-weight: 700; cursor: pointer; }
-.confirm-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+/* Modal Pix */
+.modal-overlay {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.9); z-index: 1000; display: flex; justify-content: center; align-items: center;
+}
+.modal-content { background: #141414; padding: 30px; border-radius: 15px; border: 1px solid var(--accent-color); text-align: center; max-width: 400px; width: 90%; }
+.modal-content img { width: 200px; background: #fff; padding: 10px; margin: 15px 0; border-radius: 5px; }
+.pix-copy-box input { width: 100%; background: #000; color: #fff; padding: 8px; border: 1px solid var(--border-color); font-size: 0.8rem; margin-bottom: 10px; }
+.btn-success { background: var(--success); color: #fff; width: 100%; padding: 15px; border: none; border-radius: 5px; font-weight: 700; margin-top: 10px; cursor: pointer; }
+.btn-cancel { background: none; color: var(--danger); border: none; margin-top: 10px; cursor: pointer; }
 
-/* ===========================
-   CELULAR (Mobile) e Correção de Rosto
-=========================== */
 @media (max-width: 768px) {
-    .section { padding: 40px 0; }
-    
-    body {
-        /* No celular, focamos o rosto (top right) para ele aparecer atrás do texto */
-        background-position: top right;
-    }
-
-    .header-inner { flex-direction: column; gap: 16px; }
+    body { background-position: right center; }
+    .hero-content h1 { font-size: 2.2rem; }
+    .booking-grid { grid-template-columns: 1fr; }
     .nav-links { display: none; }
-    .header-actions { width: 100%; flex-direction: column; gap: 12px; }
-    .header-actions .btn { width: 100%; }
-
-    .hero-content { align-self: flex-end; padding-bottom: 40px; }
-    .hero-content h1 { font-size: 2.5rem; }
-    
-    .booking-grid { grid-template-columns: 1fr; gap: 16px; }
-    .panel { padding: 24px 16px; }
-    .payment-methods { flex-direction: column; gap: 10px; }
-    .payment-button { width: 100%; }
 }
