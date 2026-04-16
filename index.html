@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="pt-pt">
+<html lang="pt-br">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Barbearia Premium | Agendamento</title>
+    <title>Barbearia Premium</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Playfair+Display:wght@700;800&display=swap" rel="stylesheet">
@@ -15,7 +15,7 @@
     <header class="site-header">
         <div class="container header-inner">
             <div class="brand">
-                <img src="maquininha-logo.png" alt="Logo Barbearia" class="brand-logo-img">
+                <img src="maquininha-logo.png" alt="Logo" class="brand-logo-img">
                 <div class="brand-text">
                     <span class="brand-name">Barbearia Premium</span>
                 </div>
@@ -35,15 +35,15 @@
             <div class="container hero-content">
                 <h1>O Teu Estilo, <br>A Nossa Maestria.</h1>
                 <p>Reserva o teu horário com exclusividade. Pagamento direto, sem intermediários no Pix ou segurança total no Cartão.</p>
-                <a href="#agendar" class="btn btn-primary">Escolher Horário</a>
+                <a href="#agendar" class="btn btn-primary btn-hero">Escolher Horário</a>
             </div>
         </section>
 
         <section id="servicos" class="section">
             <div class="container">
                 <div class="section-head">
-                    <h2>Serviços Disponíveis</h2>
-                    <p>Seleciona um ou mais serviços para o teu atendimento.</p>
+                    <h2>Nossos Serviços</h2>
+                    <p>Selecione quantos desejar (Arraste para o lado)</p>
                 </div>
                 
                 <div class="service-grid">
@@ -54,7 +54,6 @@
                         </div>
                         <button class="service-select">Selecionar</button>
                     </div>
-
                     <div class="service-card" data-service="Barba" data-price="55">
                         <div class="card-head">
                             <h3>Barba</h3>
@@ -62,7 +61,6 @@
                         </div>
                         <button class="service-select">Selecionar</button>
                     </div>
-
                     <div class="service-card" data-service="Corte Clássico" data-price="45">
                         <div class="card-head">
                             <h3>Corte Clássico</h3>
@@ -70,7 +68,6 @@
                         </div>
                         <button class="service-select">Selecionar</button>
                     </div>
-
                     <div class="service-card" data-service="Sobrancelha" data-price="15">
                         <div class="card-head">
                             <h3>Sobrancelha</h3>
@@ -78,10 +75,9 @@
                         </div>
                         <button class="service-select">Selecionar</button>
                     </div>
-
                     <div class="service-card test-card" data-service="Teste Sistema" data-price="1">
                         <div class="card-head">
-                            <h3>Teste do Sistema</h3>
+                            <h3>Teste (R$ 1,00)</h3>
                             <span class="price-tag">R$ 1,00</span>
                         </div>
                         <button class="service-select">Selecionar</button>
@@ -94,49 +90,32 @@
             <div class="container">
                 <div class="booking-grid">
                     <div class="panel">
-                        <h3>Os Teus Dados</h3>
+                        <h3>Seus Dados</h3>
                         <div class="field">
                             <label>Nome Completo</label>
-                            <input type="text" id="client-name" placeholder="Como te devemos chamar?">
+                            <input type="text" id="client-name" placeholder="Como quer ser chamado?">
                         </div>
                         <div class="field">
-                            <label>Data e Hora</label>
+                            <label>Agendamento</label>
                             <input type="datetime-local" id="appointment">
                         </div>
                     </div>
-
-                    <div class="panel payment-panel">
-                        <h3>Pagamento Seguro</h3>
+                    <div class="panel">
+                        <h3>Pagamento</h3>
                         <div class="payment-methods">
-                            <button class="payment-button active" data-method="pix">Pix (QRCode)</button>
-                            <button class="payment-button" data-method="card">Cartão de Crédito</button>
+                            <button class="payment-button active" data-method="pix">Pix</button>
+                            <button class="payment-button" data-method="card">Cartão</button>
                         </div>
-
                         <div class="total-line">
-                            <span>Total Estimado:</span>
+                            <span>Total:</span>
                             <span id="total-value">R$ 0,00</span>
                         </div>
-
-                        <button id="confirm-btn" class="confirm-btn" disabled>Confirmar e Pagar</button>
+                        <button id="confirm-btn" class="confirm-btn" disabled>Confirmar Agendamento</button>
                     </div>
                 </div>
             </div>
         </section>
     </main>
-
-    <div id="pix-modal" class="modal-overlay" style="display:none;">
-        <div class="modal-content">
-            <h3>Pagamento via Pix</h3>
-            <p>Efetua o pagamento e envia o comprovante no passo seguinte.</p>
-            <img id="qr-code-img" src="" alt="QR Code Pix">
-            <div class="pix-copy-box">
-                <input id="pix-copy-paste" readonly>
-                <button onclick="copyPixCode()">Copiar Código</button>
-            </div>
-            <button id="btn-check-payment" class="btn-success">Já paguei! Enviar Comprovante</button>
-            <button onclick="document.getElementById('pix-modal').style.display='none'" class="btn-cancel">Cancelar</button>
-        </div>
-    </div>
 
     <script src="script.js"></script>
 </body>
