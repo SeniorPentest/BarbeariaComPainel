@@ -22,10 +22,9 @@
             <nav class="nav-links">
                 <a href="#services">Serviços</a>
                 <a href="#booking">Agendar</a>
-                <a href="#contato">Contato</a>
             </nav>
             <div class="header-actions">
-                <span class="header-phone">11 99999-9999</span>
+                <span class="header-phone">11 91572-3418</span>
                 <a class="btn btn-primary" href="#booking">Agendar agora</a>
             </div>
         </div>
@@ -35,9 +34,18 @@
         <section class="section services" id="services">
             <div class="container">
                 <div class="section-head">
-                    <h2>Escolha seu serviço</h2>
+                    <h2>Escolha o seu serviço</h2>
                 </div>
+                
                 <div class="service-grid">
+                    <article class="service-card" data-service="Corte + Barba" data-price="90">
+                        <div class="card-head">
+                            <h3>Corte + Barba</h3>
+                            <div class="price-tag">R$ 90,00</div>
+                        </div>
+                        <button class="service-select" type="button">Selecionar</button>
+                    </article>
+                    
                     <article class="service-card" data-service="Barba" data-price="55">
                         <div class="card-head">
                             <h3>Barba</h3>
@@ -45,12 +53,37 @@
                         </div>
                         <button class="service-select" type="button">Selecionar</button>
                     </article>
-                    <article class="service-card" data-service="Corte + Barba" data-price="90">
+                    
+                    <article class="service-card" data-service="Corte Clássico" data-price="45">
                         <div class="card-head">
-                            <h3>Corte + Barba</h3>
-                            <div class="price-tag">R$ 90,00</div>
+                            <h3>Corte Clássico</h3>
+                            <div class="price-tag">R$ 45,00</div>
                         </div>
                         <button class="service-select" type="button">Selecionar</button>
+                    </article>
+
+                    <article class="service-card" data-service="Sobrancelha" data-price="15">
+                        <div class="card-head">
+                            <h3>Sobrancelha</h3>
+                            <div class="price-tag">R$ 15,00</div>
+                        </div>
+                        <button class="service-select" type="button">Selecionar</button>
+                    </article>
+
+                    <article class="service-card" data-service="Acabamento" data-price="10">
+                        <div class="card-head">
+                            <h3>Acabamento</h3>
+                            <div class="price-tag">R$ 10,00</div>
+                        </div>
+                        <button class="service-select" type="button">Selecionar</button>
+                    </article>
+
+                    <article class="service-card test-card" data-service="TESTE DO SISTEMA" data-price="1.00">
+                        <div class="card-head">
+                            <h3>Teste do Sistema</h3>
+                            <div class="price-tag">R$ 1,00</div>
+                        </div>
+                        <button class="service-select" type="button">Selecionar Teste</button>
                     </article>
                 </div>
             </div>
@@ -66,6 +99,14 @@
                             <input id="client-name" type="text" placeholder="Como deseja ser chamado?">
                         </div>
                         <div class="field">
+                            <label>Profissional</label>
+                            <select id="professional">
+                                <option value="">Primeiro disponível</option>
+                                <option value="Rafael">Rafael - Especialista em Fades</option>
+                                <option value="Bruno">Bruno - Barba Clássica</option>
+                            </select>
+                        </div>
+                        <div class="field">
                             <label>Data e horário</label>
                             <input id="appointment" type="datetime-local">
                         </div>
@@ -76,18 +117,18 @@
                         <div class="payment-methods">
                             <button class="payment-button" data-method="pix" type="button">Pix Instantâneo</button>
                             <button class="payment-button" data-method="card" type="button">Cartão de Crédito</button>
-                            <button class="payment-button" data-method="cash" type="button">Pagar na Local</button>
+                            <button class="payment-button" data-method="cash" type="button">Pagar no Local</button>
                         </div>
 
                         <div class="payment-forms">
-                            <div class="payment-form" data-method="pix">
-                                <p>O QR Code será gerado no Mercado Pago.</p>
+                            <div class="payment-form" data-method="pix" style="display: none;">
+                                <p>O QR Code será gerado no Mercado Pago para aprovação imediata.</p>
                             </div>
-                            <div class="payment-form" data-method="card">
-                                <p>Pague com segurança via Checkout Pro.</p>
+                            <div class="payment-form" data-method="card" style="display: none;">
+                                <p>Pague com segurança através do ambiente criptografado do Mercado Pago.</p>
                             </div>
-                            <div class="payment-form" data-method="cash">
-                                <p>Agende e pague direto na barbearia.</p>
+                            <div class="payment-form" data-method="cash" style="display: none;">
+                                <p>Agende online e pague diretamente na barbearia ao chegar.</p>
                             </div>
                         </div>
 
