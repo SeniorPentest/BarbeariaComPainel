@@ -13,6 +13,125 @@ const state = {
     paymentMethod: 'pix'
 };
 
+const weekdaySchedule = [
+    { start: 7 * 60, end: 12 * 60, status: 'open' },
+    { start: 12 * 60, end: 13 * 60, status: 'lunch' },
+    { start: 13 * 60, end: 20 * 60, status: 'open' }
+];
+
+const weekendSchedule = [
+    { start: 7 * 60, end: 12 * 60, status: 'open' },
+    { start: 12 * 60, end: 13 * 60, status: 'lunch' },
+    { start: 13 * 60, end: 14 * 60, status: 'open' }
+];
+
+const WEEKLY_SCHEDULE = {
+    0: weekendSchedule,
+    1: [],
+    2: weekdaySchedule,
+    3: weekdaySchedule,
+    4: weekdaySchedule,
+    5: weekdaySchedule,
+    6: weekendSchedule
+};
+
+const dayNames = ['domingo', 'segunda', 'terça', 'quarta', 'quinta', 'sexta', 'sábado'];
+
+function minutesToTimeLabel(minutes) {
+    const hours = Math.floor(minutes / 60);
+    const mins = minutes % 60;
+    return `${String(hours).padStart(2, '0')}h${mins > 0 ? String(mins).padStart(2, '0') : ''}`;
+}
+
+function findNextSegment(day, minutes) {
+    const todaySchedule = WEEKLY_SCHEDULE[day] || [];
+    const upcomingToday = todaySchedule.find(segment => minutes < segment.start);
+    if (upcomingToday) {
+        return { day, segment: upcomingToday };
+    }
+
+    for (let offset = 1; offset <= 7; offset++) {
+        const targetDay = (day + offset) % 7;
+        const schedule = WEEKLY_SCHEDULE[targetDay] || [];
+        if (schedule.length) return { day: targetDay, segment: schedule[0] };
+    }
+    return null;
+}
+
+function describeDayOffset(currentDay, targetDay) {
+    const diff = (targetDay - currentDay + 7) % 7;
+    if (diff === 0) return 'hoje';
+    if (diff === 1) return 'amanhã';
+    const preposition = (targetDay === 0 || targetDay === 6) ? 'no' : 'na';
+    return `${preposition} ${dayNames[targetDay]}`;
+}
+
+function updateStatusPanel() {
+    const indicatorEl = document.getElementById('status-indicator');
+    const primaryEl = document.getElementById('status-principal');
+    const secondaryEl = document.getElementById('status-secundario');
+
+    if (!indicatorEl || !primaryEl || !secondaryEl) return;
+
+    const now = new Date();
+    const day = now.getDay();
+    const minutes = now.getHours() * 60 + now.getMinutes();
+    const todaysSchedule = WEEKLY_SCHEDULE[day] || [];
+    const currentSegment = todaysSchedule.find(segment => minutes >= segment.start && minutes < segment.end);
+
+    let status = 'closed';
+    let nextChangeDay = null;
+    let nextChangeMinutes = null;
+    let nextAfterCurrent = null;
+
+    if (currentSegment) {
+        status = currentSegment.status;
+        nextChangeDay = day;
+        nextChangeMinutes = currentSegment.end;
+        nextAfterCurrent = findNextSegment(day, currentSegment.end);
+    } else {
+        const nextSegment = findNextSegment(day, minutes);
+        if (nextSegment) {
+            status = 'closed';
+            nextChangeDay = nextSegment.day;
+            nextChangeMinutes = nextSegment.segment.start;
+        }
+    }
+
+    indicatorEl.className = 'status-indicator';
+    indicatorEl.classList.add(`status-${status}`);
+
+    let primaryText = '';
+    let secondaryText = '';
+
+    if (status === 'open' && currentSegment) {
+        primaryText = 'Aberto Agora';
+        const closingLabel = minutesToTimeLabel(currentSegment.end);
+        const isLunchNext = nextAfterCurrent && nextAfterCurrent.day === day && nextAfterCurrent.segment.status === 'lunch';
+        if (isLunchNext) {
+            secondaryText = `Pausa para almoço às ${closingLabel}`;
+        } else {
+            const closingDayLabel = describeDayOffset(day, nextChangeDay || day);
+            secondaryText = `Fechamos ${closingDayLabel === 'hoje' ? '' : `${closingDayLabel} `}às ${closingLabel}`.trim();
+        }
+    } else if (status === 'lunch') {
+        const reopenLabel = nextAfterCurrent ? minutesToTimeLabel(nextAfterCurrent.segment.start) : '13h';
+        primaryText = `🍽️ Em Almoço... Voltamos às ${reopenLabel}`;
+        secondaryText = `Voltamos às ${reopenLabel}`;
+    } else {
+        primaryText = 'Fechado';
+        if (nextChangeMinutes !== null && nextChangeDay !== null) {
+            const dayLabel = describeDayOffset(day, nextChangeDay);
+            secondaryText = `Abrimos ${dayLabel} às ${minutesToTimeLabel(nextChangeMinutes)}`;
+        } else {
+            secondaryText = 'Consulte nossos horários especiais.';
+        }
+    }
+
+    primaryEl.textContent = primaryText;
+    secondaryEl.textContent = secondaryText;
+}
+
 function emvField(id, value) {
     const length = String(value.length).padStart(2, '0');
     return `${id}${length}${value}`;
@@ -157,3 +276,6 @@ document.getElementById('close-pix-modal')?.addEventListener('click', closePixMo
 document.getElementById('pix-modal')?.addEventListener('click', (event) => {
     if (event.target.id === 'pix-modal') closePixModal();
 });
+
+updateStatusPanel();
+setInterval(updateStatusPanel, 60 * 1000);
