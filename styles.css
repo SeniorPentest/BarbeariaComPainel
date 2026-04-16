@@ -1,111 +1,31 @@
-:root {
-    --bg-color: #0a0a0a;
-    --surface-color: rgba(20, 20, 20, 0.85);
-    --border-color: #2a2a2a;
-    --text-primary: #ffffff;
-    --text-secondary: #a0a0a0;
-    --accent-color: #d4af37;
-    --accent-hover: #b5952f;
-    --danger: #ff4444;
-    --success: #00C851;
-    --font-sans: 'Inter', sans-serif;
-    --font-serif: 'Playfair Display', serif;
-}
-
-* { margin: 0; padding: 0; box-sizing: border-box; }
-html { scroll-behavior: smooth; }
-
-body {
-    background-color: var(--bg-color);
-    color: var(--text-primary);
-    font-family: var(--font-sans);
-    line-height: 1.6;
-    background-image: url('fundo-rosto.jpg'); 
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    background-attachment: fixed;
-    position: relative;
-    min-height: 100vh;
-}
-
-/* Overlay Escuro para Legibilidade */
-body::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; width: 100%; height: 100%;
-    background-color: rgba(0, 0, 0, 0.75);
-    z-index: -1;
-}
-
-.container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
-
-/* Cabeçalho e Logo */
-.site-header {
-    background-color: rgba(10, 10, 10, 0.9);
-    backdrop-filter: blur(10px);
-    border-bottom: 1px solid var(--border-color);
-    position: sticky; top: 0; z-index: 100;
-    padding: 12px 0;
-}
-
-.header-inner { display: flex; justify-content: space-between; align-items: center; }
-.brand { display: flex; align-items: center; gap: 12px; }
-.brand-logo-img { height: 55px; width: auto; object-fit: contain; }
-.brand-name { font-family: var(--font-serif); font-size: 1.4rem; font-weight: 800; }
-
-.nav-links a { color: var(--text-primary); text-decoration: none; margin: 0 10px; font-weight: 500; }
-.nav-links a:hover { color: var(--accent-color); }
-
-/* Hero */
-.hero-section { height: 70vh; display: flex; align-items: center; }
-.hero-content { max-width: 650px; }
-.hero-content h1 { font-size: 3.5rem; color: var(--accent-color); margin-bottom: 20px; }
-
-/* Cards e Seções */
-.section { padding: 60px 0; }
-.service-grid { display: flex; overflow-x: auto; gap: 20px; padding-bottom: 15px; }
-.service-card {
-    min-width: 280px; background: var(--surface-color); border: 1px solid var(--border-color);
-    border-radius: 12px; padding: 25px; transition: 0.3s;
-}
-.service-card.selected { border-color: var(--accent-color); background: rgba(212, 175, 55, 0.1); }
-.price-tag { color: var(--accent-color); font-weight: 800; font-size: 1.3rem; }
-
-/* Botões */
-.btn, .service-select, .confirm-btn {
-    cursor: pointer; border-radius: 6px; border: none; font-weight: 700; transition: 0.2s;
-}
-.btn-primary, .confirm-btn { background: var(--accent-color); color: #000; padding: 12px 25px; }
-.service-select { width: 100%; padding: 10px; background: transparent; color: #fff; border: 1px solid var(--border-color); margin-top: 15px; }
-.service-card.selected .service-select { background: var(--accent-color); color: #000; }
-
-/* Agendamento */
-.booking-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 25px; }
-.panel { background: var(--surface-color); padding: 30px; border-radius: 15px; border: 1px solid var(--border-color); }
-.field input, .field select {
-    width: 100%; padding: 12px; background: #000; border: 1px solid var(--border-color);
-    color: #fff; border-radius: 5px; margin-top: 8px; margin-bottom: 15px;
-}
-
-.payment-methods { display: flex; gap: 10px; margin-bottom: 20px; }
-.payment-button { flex: 1; padding: 10px; background: none; border: 1px solid var(--border-color); color: #fff; border-radius: 5px; cursor: pointer; }
-.payment-button.active { border-color: var(--accent-color); color: var(--accent-color); }
-
-/* Modal Pix */
-.modal-overlay {
-    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-    background: rgba(0,0,0,0.9); z-index: 1000; display: flex; justify-content: center; align-items: center;
-}
-.modal-content { background: #141414; padding: 30px; border-radius: 15px; border: 1px solid var(--accent-color); text-align: center; max-width: 400px; width: 90%; }
-.modal-content img { width: 200px; background: #fff; padding: 10px; margin: 15px 0; border-radius: 5px; }
-.pix-copy-box input { width: 100%; background: #000; color: #fff; padding: 8px; border: 1px solid var(--border-color); font-size: 0.8rem; margin-bottom: 10px; }
-.btn-success { background: var(--success); color: #fff; width: 100%; padding: 15px; border: none; border-radius: 5px; font-weight: 700; margin-top: 10px; cursor: pointer; }
-.btn-cancel { background: none; color: var(--danger); border: none; margin-top: 10px; cursor: pointer; }
-
 @media (max-width: 768px) {
+    /* Ajuste do fundo e textos */
     body { background-position: right center; }
     .hero-content h1 { font-size: 2.2rem; }
-    .booking-grid { grid-template-columns: 1fr; }
     .nav-links { display: none; }
+    .booking-grid { grid-template-columns: 1fr; }
+
+    /* CORREÇÃO DO CABEÇALHO (O 1% que faltava) */
+    .header-inner { 
+        flex-direction: column; /* Coloca a logo e o botão um embaixo do outro */
+        gap: 16px; 
+    }
+    .brand { 
+        justify-content: center; /* Centraliza a logo */
+        width: 100%;
+    }
+    .header-actions { 
+        width: 100%; 
+    }
+    .header-actions .btn { 
+        width: 100%; /* Botão largo para facilitar o clique com o polegar */
+        display: block;
+    }
+
+    /* CORREÇÃO DO BOTÃO HERO */
+    .hero-content .btn { 
+        width: 100%; /* Padroniza o tamanho do botão "Escolher Horário" */
+        text-align: center;
+        display: block;
+    }
 }
