@@ -14,6 +14,67 @@ const state = {
     appointmentTime: null
 };
 
+function updateUI() {
+    const totalEl = document.getElementById('total-value');
+    if (totalEl) {
+        totalEl.textContent = `R$ ${state.totalPrice.toFixed(2)}`;
+    }
+
+    const nameInput = document.getElementById('client-name');
+    const confirmBtn = document.getElementById('confirm-btn');
+
+    const hasName = nameInput && nameInput.value.trim().length > 0;
+    const hasTime = Boolean(state.appointmentTime);
+    const hasServices = state.selectedServices.length > 0;
+
+    if (confirmBtn) {
+        confirmBtn.disabled = !(hasServices && hasTime && hasName);
+    }
+}
+
+function bindServiceSelection() {
+    document.querySelectorAll('.service-card').forEach(card => {
+        const btn = card.querySelector('.service-select');
+        const name = card.dataset.service;
+        const price = Number(card.dataset.price || 0);
+
+        if (!btn || !name) return;
+
+        btn.addEventListener('click', () => {
+            const existingIndex = state.selectedServices.findIndex(s => s.name === name);
+            if (existingIndex >= 0) {
+                state.selectedServices.splice(existingIndex, 1);
+                card.classList.remove('selected');
+                btn.textContent = 'Selecionar';
+            } else {
+                state.selectedServices.push({ name, price });
+                card.classList.add('selected');
+                btn.textContent = 'Selecionado';
+            }
+
+            state.totalPrice = state.selectedServices.reduce((sum, s) => sum + s.price, 0);
+            updateUI();
+        });
+    });
+}
+
+function bindPaymentSelection() {
+    document.querySelectorAll('.payment-button').forEach(btn => {
+        btn.addEventListener('click', () => {
+            document.querySelectorAll('.payment-button').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            state.paymentMethod = btn.dataset.method || 'pix';
+        });
+    });
+}
+
+function bindClientNameListener() {
+    const nameInput = document.getElementById('client-name');
+    if (nameInput) {
+        nameInput.addEventListener('input', updateUI);
+    }
+}
+
 const weekdaySchedule = [
     { start: 7 * 60, end: 12 * 60, status: 'open' },
     { start: 12 * 60, end: 13 * 60, status: 'lunch' },
@@ -46,7 +107,7 @@ async function renderTimeSlots() {
 
         if (error) throw error;
 
-        const bookedTimes = bookedSlots.map(s => new Date(s.data_hora).toISOString());
+        const bookedTimes = (bookedSlots || []).map(s => new Date(s.data_hora).toISOString());
 
         const selectedDate = new Date(dateInput.value + 'T00:00:00');
         const dayOfWeek = selectedDate.getDay();
@@ -72,6 +133,9 @@ async function renderTimeSlots() {
                     const btn = document.createElement('button');
                     btn.className = 'time-slot';
                     btn.textContent = timeLabel;
+                    if (state.appointmentTime === slotFullISO) {
+                        btn.classList.add('selected');
+                    }
                     if (isBooked) {
                         btn.disabled = true;
                         btn.style.opacity = '0.3';
@@ -100,15 +164,19 @@ if (dateInput) {
     const today = new Date().toISOString().split('T')[0];
     dateInput.value = today;
     dateInput.min = today;
-    dateInput.addEventListener('change', renderTimeSlots);
+    const onDateChange = () => {
+        state.appointmentTime = null;
+        updateUI();
+        renderTimeSlots();
+    };
+    dateInput.addEventListener('change', onDateChange);
     renderTimeSlots();
 }
 
-function updateUI() {
-    document.getElementById('total-value').textContent = `R$ ${state.totalPrice.toFixed(2)}`;
-    const ready = state.selectedServices.length > 0 && state.appointmentTime && document.getElementById('client-name').value;
-    document.getElementById('confirm-btn').disabled = !ready;
-}
+bindServiceSelection();
+bindPaymentSelection();
+bindClientNameListener();
+updateUI();
 
 // Lógica de Agendamento Final
 async function confirmBooking() {
@@ -148,4 +216,7 @@ async function confirmBooking() {
     }
 }
 
-document.getElementById('confirm-btn').addEventListener('click', confirmBooking);
+const confirmBtn = document.getElementById('confirm-btn');
+if (confirmBtn) {
+    confirmBtn.addEventListener('click', confirmBooking);
+}
