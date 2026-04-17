@@ -246,7 +246,7 @@ function getAppointmentValue() {
     return `${dateValue}T${state.appointmentTime}`;
 }
 
-function renderTimeSlots() {
+async function renderTimeSlots() {
     const dateInput = document.getElementById('appointment-date');
     const slotsContainer = document.getElementById('time-slots');
     if (!dateInput || !slotsContainer) return;
@@ -266,6 +266,39 @@ function renderTimeSlots() {
         return;
     }
 
+    let bookedSlots = [];
+    try {
+        const startOfDay = new Date(selectedDate);
+        const endOfDay = new Date(selectedDate);
+        endOfDay.setDate(endOfDay.getDate() + 1);
+
+        const { data, error } = await supabaseClient
+            .from('agendamentos')
+            .select('data_hora')
+            .gte('data_hora', startOfDay.toISOString())
+            .lt('data_hora', endOfDay.toISOString());
+
+        if (error) throw error;
+
+        bookedSlots = (data || [])
+            .map(item => {
+                const slotDate = new Date(item.data_hora);
+                if (Number.isNaN(slotDate.getTime())) return null;
+                const minutes = slotDate.getHours() * 60 + slotDate.getMinutes();
+                return formatSlotLabel(minutes);
+            })
+            .filter(Boolean);
+    } catch (err) {
+        console.error('Erro ao carregar horários do dia selecionado:', err);
+        const errorMsg = document.createElement('p');
+        errorMsg.textContent = 'Não foi possível carregar os horários disponíveis. Tente novamente.';
+        slotsContainer.appendChild(errorMsg);
+        updateUI();
+        return;
+    }
+
+    const bookedSet = new Set(bookedSlots);
+
     const day = selectedDate.getDay();
     const segments = WEEKLY_SCHEDULE[day] || [];
     const fragment = document.createDocumentFragment();
@@ -278,6 +311,12 @@ function renderTimeSlots() {
             btn.type = 'button';
             btn.className = 'time-slot';
             btn.textContent = label;
+            const isBooked = bookedSet.has(label);
+            btn.disabled = isBooked;
+            if (isBooked) {
+                btn.classList.add('time-slot-booked');
+                btn.title = 'Horário indisponível';
+            }
             btn.addEventListener('click', () => {
                 slotsContainer.querySelectorAll('.time-slot').forEach(slot => slot.classList.remove('selected'));
                 btn.classList.add('selected');
