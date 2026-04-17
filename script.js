@@ -190,6 +190,22 @@ function formatAppointment(value) {
     return Number.isNaN(date.getTime()) ? value : date.toLocaleString('pt-BR');
 }
 
+function buildWhatsAppMessage({ intro, name, services, total, appointment }) {
+    const formattedAppointment = formatAppointment(appointment);
+    const lines = [
+        intro,
+        `Cliente: ${name}`,
+        `Serviços: ${services}`,
+        `Total: R$ ${Number(total).toFixed(2)}`
+    ];
+    if (formattedAppointment) lines.push(`Horário: ${formattedAppointment}`);
+    return lines.join('\n');
+}
+
+function openWhatsAppWithMessage(message) {
+    window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`, '_blank');
+}
+
 // Seleção de Serviços
 document.querySelectorAll('.service-card').forEach(card => {
     card.querySelector('.service-select').addEventListener('click', () => {
@@ -245,10 +261,24 @@ async function confirmBooking() {
             document.getElementById('pix-modal').classList.add('open');
 
             document.getElementById('btn-check-payment').onclick = () => {
-                const formattedAppointment = formatAppointment(appointment);
-                const msg = `Olá! Já paguei via Pix.\nCliente: ${name}\nServiços: ${services}\nTotal: R$ ${state.totalPrice.toFixed(2)}${formattedAppointment ? `\nHorário: ${formattedAppointment}` : ''}\nEnvio o comprovante para confirmar?`;
-                window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`, '_blank');
+                const msg = buildWhatsAppMessage({
+                    intro: 'Olá! Já paguei via Pix.',
+                    name,
+                    services,
+                    total: state.totalPrice,
+                    appointment
+                }) + `\nEnvio o comprovante para confirmar?`;
+                openWhatsAppWithMessage(msg);
             };
+        } else if (state.paymentMethod === 'cash') {
+            const msg = buildWhatsAppMessage({
+                intro: 'Olá! Quero agendar pagando em dinheiro.',
+                name,
+                services,
+                total: state.totalPrice,
+                appointment
+            });
+            openWhatsAppWithMessage(msg);
         } else {
             const { data, error } = await supabaseClient.functions.invoke('criar-pagamento', {
                 body: { items: state.selectedServices, method: 'card', total: state.totalPrice }
