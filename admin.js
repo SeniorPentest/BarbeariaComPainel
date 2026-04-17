@@ -4,17 +4,29 @@ const supabaseClient = supabase.createClient(supabaseUrl, supabaseAnonKey);
 
 const SENHA_MESTRA = 'barber2026';
 
-async function checkLogin() {
-    const pass = document.getElementById('admin-pass').value;
-    if (pass === SENHA_MESTRA) {
-        document.getElementById('login-modal').style.display = 'none';
-        loadDashboard();
-    } else {
-        alert("Senha incorreta!");
+function setCurrentDate() {
+    const currentDateEl = document.getElementById('current-date');
+    if (currentDateEl) {
+        const today = new Date();
+        currentDateEl.textContent = today.toLocaleDateString('pt-BR', { weekday: 'long', day: '2-digit', month: '2-digit' });
     }
 }
 
+function getStatusClass(status) {
+    const normalized = (status || '').toLowerCase();
+    if (normalized === 'pendente' || normalized === 'reservado') return 'status-reserved';
+    if (normalized === 'ocupado' || normalized === 'concluído' || normalized === 'concluido') return 'status-busy';
+    return 'status-free';
+}
+
 async function loadDashboard() {
+    const container = document.getElementById('admin-list');
+    const lastUpdateEl = document.getElementById('last-update');
+
+    if (!container) return;
+
+    container.innerHTML = '<p>Carregando agenda...</p>';
+
     const { data, error } = await supabaseClient
         .from('agendamentos')
         .select('*')
@@ -22,21 +34,56 @@ async function loadDashboard() {
 
     if (error) {
         console.error("ERRO ADMIN:", error);
+        container.innerHTML = '<p style="color:#ff5c5c;">Erro ao carregar agenda.</p>';
         return;
     }
 
-    const container = document.getElementById('admin-list');
     container.innerHTML = '';
 
-    data.forEach(reserva => {
-        const div = document.createElement('div');
-        div.className = 'admin-card';
-        div.innerHTML = `
-            <p><strong>${new Date(reserva.data_hora).toLocaleString()}</strong></p>
-            <p>Cliente: ${reserva.cliente_nome}</p>
-            <p>Serviço: ${reserva.servicos}</p>
-            <p>Status: ${reserva.status}</p>
-        `;
-        container.appendChild(div);
-    });
+    if (!data || data.length === 0) {
+        container.innerHTML = '<p>Nenhum agendamento encontrado.</p>';
+    } else {
+        data.forEach(reserva => {
+            const horario = new Date(reserva.data_hora);
+            const card = document.createElement('div');
+            card.className = 'slot-card';
+            card.innerHTML = `
+                <div class="slot-time">${horario.toLocaleDateString('pt-BR')} • ${horario.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}</div>
+                <div class="slot-body">
+                    <div class="slot-meta"><strong>${reserva.cliente_nome || 'Sem nome'}</strong></div>
+                    <div class="slot-meta">${reserva.servicos || 'Serviço não informado'}</div>
+                </div>
+                <div class="status-pill ${getStatusClass(reserva.status)}">${reserva.status || 'Reservado'}</div>
+            `;
+            container.appendChild(card);
+        });
+    }
+
+    if (lastUpdateEl) {
+        lastUpdateEl.textContent = new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+    }
 }
+
+function handleLogin(event) {
+    event.preventDefault();
+    const input = document.getElementById('access-password');
+    const errorEl = document.getElementById('access-error');
+    const overlay = document.getElementById('access-modal');
+    const shell = document.getElementById('admin-shell');
+
+    if (!input || !overlay || !shell) return;
+
+    if (input.value === SENHA_MESTRA) {
+        if (errorEl) errorEl.textContent = '';
+        overlay.classList.remove('open');
+        shell.classList.add('unlocked');
+        loadDashboard();
+    } else if (errorEl) {
+        errorEl.textContent = 'Senha incorreta. Tente novamente.';
+    }
+}
+
+document.getElementById('access-form')?.addEventListener('submit', handleLogin);
+document.getElementById('refresh-agenda')?.addEventListener('click', loadDashboard);
+
+setCurrentDate();

@@ -260,7 +260,14 @@ body::before {
 .field input:focus { outline: none; border-color: var(--accent-color); box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.18); }
 .time-slots-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); gap: 10px; margin-top: 15px; }
 .time-slot { background: transparent; border: 1px solid var(--border-color); color: #fff; padding: 10px; border-radius: 6px; cursor: pointer; text-align: center; transition: 0.2s; }
-.time-slot.selected { background: var(--accent-color); color: #000; border-color: var(--accent-color); font-weight: bold; }
+.time-slot.selected { 
+    background: var(--accent-color); 
+    color: #000; 
+    border-color: var(--accent-color); 
+    box-shadow: 0 0 0 2px rgba(212, 175, 55, 0.35);
+    font-weight: 700; 
+}
+.time-slot.selected:hover { transform: none; }
 .time-slot-booked, .time-slot:disabled { 
     background: #1a1a1a; 
     border-color: #444; 
