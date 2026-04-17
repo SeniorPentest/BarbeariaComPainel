@@ -106,14 +106,16 @@
                     <div class="panel">
                         <h3>Seus Dados</h3>
                         <div class="field">
-                            <label>Nome Completo</label>
-                            <input type="text" id="client-name" placeholder="Como quer ser chamado?">
-                        </div>
-                        <div class="field">
-                            <label>Agendamento</label>
-                            <input type="datetime-local" id="appointment">
-                        </div>
+                        <label>Nome Completo</label>
+                        <input type="text" id="client-name" placeholder="Como quer ser chamado?">
                     </div>
+                    <div class="field">
+                        <label>Agendamento</label>
+                        <input type="date" id="appointment-date">
+                        <div id="time-slots" class="time-slots-grid"></div>
+                        <p>* Erros podem acontecer, sujeito a espera de até 15 minutos no local.</p>
+                    </div>
+                </div>
                     <div class="panel">
                         <h3>Pagamento</h3>
                         <div class="payment-methods">
