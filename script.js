@@ -228,6 +228,7 @@ async function confirmBooking() {
     const name = document.getElementById('client-name').value;
     const services = state.selectedServices.map(s => s.name).join(', ');
     const appointment = document.getElementById('appointment').value;
+    const formattedAppointment = formatAppointment(appointment);
 
     try {
         if (state.paymentMethod === 'pix') {
@@ -239,10 +240,32 @@ async function confirmBooking() {
             document.getElementById('pix-modal').classList.add('open');
 
             document.getElementById('btn-check-payment').onclick = () => {
-                const formattedAppointment = formatAppointment(appointment);
                 const msg = `Olá! Já paguei via Pix.\nCliente: ${name}\nServiços: ${services}\nTotal: R$ ${state.totalPrice.toFixed(2)}${formattedAppointment ? `\nHorário: ${formattedAppointment}` : ''}\nEnvio o comprovante para confirmar?`;
                 window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`, '_blank');
             };
+        } else if (state.paymentMethod === 'local') {
+            const { error } = await supabaseClient
+                .from('agendamentos')
+                .insert({
+                    nome: name,
+                    servicos: services,
+                    data_hora: appointment,
+                    total: state.totalPrice,
+                    status: 'Pendente (Pagar no Local)',
+                    pagamento: 'local'
+                });
+
+            if (error) throw error;
+
+            const msg = [
+                `Olá! Sou ${name}.`,
+                formattedAppointment ? `Data/Hora: ${formattedAppointment}` : '',
+                `Serviços: ${services}`,
+                `Total: R$ ${state.totalPrice.toFixed(2)}`,
+                'Gostaria de agendar e pagar diretamente na barbearia.'
+            ].filter(Boolean).join('\n');
+
+            window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`, '_blank');
         } else {
             const { data, error } = await supabaseClient.functions.invoke('criar-pagamento', {
                 body: { items: state.selectedServices, method: 'card', total: state.totalPrice }
