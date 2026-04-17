@@ -268,22 +268,18 @@ async function renderTimeSlots() {
 
     let bookedSlots = [];
     try {
-        const startOfDay = new Date(selectedDate);
-        const endOfDay = new Date(selectedDate);
-        endOfDay.setDate(endOfDay.getDate() + 1);
+        const { data, error } = await supabaseClient.from('agendamentos').select('data_hora');
+        if (error) {
+            console.error('ERRO SUPABASE: ', error);
+            throw error;
+        }
 
-        const { data, error } = await supabaseClient
-            .from('agendamentos')
-            .select('data_hora')
-            .gte('data_hora', startOfDay.toISOString())
-            .lt('data_hora', endOfDay.toISOString());
-
-        if (error) throw error;
-
+        const selectedDateIso = selectedDate.toISOString().split('T')[0];
         bookedSlots = (data || [])
             .map(item => {
                 const slotDate = new Date(item.data_hora);
                 if (Number.isNaN(slotDate.getTime())) return null;
+                if (slotDate.toISOString().split('T')[0] !== selectedDateIso) return null;
                 const minutes = slotDate.getHours() * 60 + slotDate.getMinutes();
                 return formatSlotLabel(minutes);
             })
