@@ -89,22 +89,27 @@ async function initializeRealtime() {
 
 async function loadAgenda() {
     setLoading(true);
-    const { start, end } = getDayRange();
-    const { data, error } = await supabaseClient
-        .from('agendamentos')
-        .select('*')
-        .gte('horario', start)
-        .lte('horario', end)
-        .order('horario', { ascending: true });
+    const { data, error } = await supabaseClient.from('agendamentos').select('*');
 
     setLoading(false);
 
     if (error) {
+        console.error('ERRO ADMIN SUPABASE: ', error);
         showToast('Erro ao carregar agenda. Verifique o Supabase.');
         return;
     }
 
-    state.appointments = buildAppointmentMap(data || []);
+    const { start, end } = getDayRange();
+    const startTime = new Date(start).getTime();
+    const endTime = new Date(end).getTime();
+    const filteredData = (Array.isArray(data) ? data : []).filter(item => {
+        if (!item?.horario) return false;
+        const time = new Date(item.horario).getTime();
+        if (Number.isNaN(time)) return false;
+        return time >= startTime && time <= endTime;
+    });
+
+    state.appointments = buildAppointmentMap(filteredData);
     state.lastUpdated = new Date();
     updateLastUpdateLabel();
     renderSlots();
