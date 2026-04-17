@@ -75,7 +75,13 @@ function updateStatusPanel() {
 
     const now = new Date();
     const day = now.getDay();
-    const minutes = now.getHours() * 60 + now.getMinutes();
+    
+    // ======== ALTERAÇÃO DE TESTE AQUI ========
+    // Forçando 10h da manhã (10 * 60 minutos)
+    const minutes = 10 * 60; 
+    // Original escondido: const minutes = now.getHours() * 60 + now.getMinutes();
+    // =========================================
+
     const todaysSchedule = WEEKLY_SCHEDULE[day] || [];
     const currentSegment = todaysSchedule.find(segment => minutes >= segment.start && minutes < segment.end);
 
