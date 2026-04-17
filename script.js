@@ -10,7 +10,8 @@ const MERCHANT_CITY = 'Sao Paulo';
 const state = {
     selectedServices: [],
     totalPrice: 0,
-    paymentMethod: 'pix'
+    paymentMethod: 'pix',
+    appointmentTime: null
 };
 
 const weekdaySchedule = [
@@ -41,6 +42,12 @@ function minutesToTimeLabel(minutes) {
     const hours = Math.floor(minutes / 60);
     const mins = minutes % 60;
     return `${String(hours).padStart(2, '0')}h${mins > 0 ? String(mins).padStart(2, '0') : ''}`;
+}
+
+function formatSlotLabel(minutes) {
+    const hours = Math.floor(minutes / 60).toString().padStart(2, '0');
+    const mins = (minutes % 60).toString().padStart(2, '0');
+    return `${hours}:${mins}`;
 }
 
 function findNextSegment(day, minutes) {
@@ -233,13 +240,81 @@ document.querySelectorAll('.payment-button').forEach(btn => {
     });
 });
 
+function getAppointmentValue() {
+    const dateValue = document.getElementById('appointment-date')?.value;
+    if (!dateValue || !state.appointmentTime) return '';
+    return `${dateValue}T${state.appointmentTime}`;
+}
+
+function renderTimeSlots() {
+    const dateInput = document.getElementById('appointment-date');
+    const slotsContainer = document.getElementById('time-slots');
+    if (!dateInput || !slotsContainer) return;
+
+    const dateValue = dateInput.value;
+    state.appointmentTime = null;
+    slotsContainer.innerHTML = '';
+
+    if (!dateValue) {
+        updateUI();
+        return;
+    }
+
+    const selectedDate = new Date(`${dateValue}T00:00:00`);
+    if (Number.isNaN(selectedDate.getTime())) {
+        updateUI();
+        return;
+    }
+
+    const day = selectedDate.getDay();
+    const segments = WEEKLY_SCHEDULE[day] || [];
+    const fragment = document.createDocumentFragment();
+
+    segments.forEach(segment => {
+        if (segment.status !== 'open') return;
+        for (let minutes = segment.start; minutes < segment.end; minutes += 30) {
+            const label = formatSlotLabel(minutes);
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            btn.className = 'time-slot';
+            btn.textContent = label;
+            btn.addEventListener('click', () => {
+                slotsContainer.querySelectorAll('.time-slot').forEach(slot => slot.classList.remove('selected'));
+                btn.classList.add('selected');
+                state.appointmentTime = label;
+                updateUI();
+            });
+            fragment.appendChild(btn);
+        }
+    });
+
+    if (!fragment.childNodes.length) {
+        const empty = document.createElement('p');
+        empty.textContent = 'Sem horários disponíveis para este dia.';
+        slotsContainer.appendChild(empty);
+    } else {
+        slotsContainer.appendChild(fragment);
+    }
+
+    updateUI();
+}
+
 function updateUI() {
     document.getElementById('total-value').textContent = `R$ ${state.totalPrice.toFixed(2)}`;
-    const ready = state.selectedServices.length > 0 && document.getElementById('appointment').value && document.getElementById('client-name').value;
+    const hasDate = document.getElementById('appointment-date')?.value;
+    const hasName = document.getElementById('client-name').value;
+    const ready = state.selectedServices.length > 0 && hasDate && state.appointmentTime && hasName;
     document.getElementById('confirm-btn').disabled = !ready;
 }
 
-document.getElementById('appointment').addEventListener('change', updateUI);
+const appointmentDateInput = document.getElementById('appointment-date');
+if (appointmentDateInput) {
+    const today = new Date();
+    appointmentDateInput.value = today.toISOString().split('T')[0];
+    appointmentDateInput.addEventListener('change', renderTimeSlots);
+    renderTimeSlots();
+}
+
 document.getElementById('client-name').addEventListener('input', updateUI);
 
 async function confirmBooking() {
@@ -249,7 +324,14 @@ async function confirmBooking() {
 
     const name = document.getElementById('client-name').value;
     const services = state.selectedServices.map(s => s.name).join(', ');
-    const appointment = document.getElementById('appointment').value;
+    const appointment = getAppointmentValue();
+
+    if (!appointment) {
+        btn.textContent = 'Confirmar Agendamento';
+        btn.disabled = false;
+        alert('Selecione a data e o horário do agendamento.');
+        return;
+    }
 
     try {
         if (state.paymentMethod === 'pix') {
